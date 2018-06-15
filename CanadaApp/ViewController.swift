@@ -21,7 +21,7 @@ struct rowObject: Decodable {
 
 class ViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 
-    @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet var collectionView: UICollectionView!
     
     @IBAction func refresh(_ sender: UIBarButtonItem) {
         self.collectionView.reloadData()
@@ -39,7 +39,7 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
         guard let url = URL(string: jsonUrl) else {return}
         
         URLSession.shared.dataTask(with: url) { (data, response, err) in
-            
+            // TODO: replace guard with if let
             guard let data = data else {return}
             
             let dataAsIsoLatin = String(data: data, encoding: .isoLatin1)
@@ -66,7 +66,6 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
     }
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        print(rowObjects.count)
         return rowObjects.count
     }
     
@@ -92,7 +91,8 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
         }
         
         if let rowObjectsImageLink = rowObjects[indexPath.row].imageHref {
-            cell.imageView.downloadedFrom(link: rowObjectsImageLink)
+            cell.imageView.image = UIImage(named: "image_not_downloaded")
+            cell.imageView.downloadImageLazyFrom(link: rowObjectsImageLink, contentMode: .scaleAspectFit)
         } else {
             cell.imageView.image = UIImage(named: "imagehref_is_null")
         }
@@ -100,19 +100,41 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
         return cell
     }
     
-//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//
-//        let storyboard = UIStoryboard.init(name: "Main", bundle: nil)
-//        let vc = storyboard.instantiateViewController(withIdentifier: "detailPage")
-//        let detailPage = vc as! DetailViewController
-//        self.navigationController?.pushViewController(detailPage, animated: true)
-//
-//    }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "detailPage")
+        let detailPage = vc as! DetailViewController
+        
+        
+        if let cell = collectionView.cellForItem(at: indexPath) as? CustomCollectionViewCell {
+            detailPage.title = cell.titleLabel.text
+            detailPage.text = cell.descriptionLabel.text!
+        } else {
+            detailPage.title = "Null"
+            detailPage.text = "Null"
+        }
+        
+        if let rowObjectsImageLink = rowObjects[indexPath.row].imageHref {
+            detailPage.imageName = rowObjectsImageLink
+        } else {
+            detailPage.imageName = "imagehref_is_null"
+        }
+
+        if let navCon = self.navigationController {
+            navCon.pushViewController(detailPage, animated: true)
+        } else {
+        }
+    }
     
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 10
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
 //        let realScreenHeight = (self.collectionView.bounds.height - (self.navigationController?.navigationBar.bounds.height)! - UIApplication.shared.statusBarFrame.height)
-//        return CGSize(width: self.collectionView.frame.width, height: (self.collectionView.frame.height / 5))
-//    }
+        return CGSize(width: self.collectionView.frame.width, height: (self.collectionView.frame.height / 5))
+    }
     
 }
 
@@ -137,7 +159,6 @@ extension UIImageView {
                 image = UIImage(named: "image_not_downloaded")!
             }
             
-
             DispatchQueue.main.async() {
                 self.image = image
             }
@@ -146,6 +167,16 @@ extension UIImageView {
     func downloadedFrom(link: String, contentMode mode: UIViewContentMode = .scaleAspectFit) {
         guard let url = URL(string: link) else { return }
         downloadedFrom(url: url, contentMode: mode)
+    }
+    
+    func downloadImageLazyFrom(link:String, contentMode: UIViewContentMode) {
+        URLSession.shared.dataTask( with: URL(string:link)!, completionHandler: {
+            (data, response, error) -> Void in
+            DispatchQueue.main.async() {
+                self.contentMode =  contentMode
+                if let data = data { self.image = UIImage(data: data) }
+            }
+        }).resume()
     }
 }
 
