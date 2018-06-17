@@ -44,10 +44,10 @@
                                                             <rect key="frame" x="0.0" y="0.0" width="375" height="76.666666666666671"/>
                                                             <subviews>
                                                                 <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="25p-BG-9RA">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="113.33333333333333" height="76.666666666666671"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="112.66666666666667" height="76.666666666666671"/>
                                                                 </imageView>
                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9JK-gD-2uO">
-                                                                    <rect key="frame" x="121.33333333333333" y="0.0" width="253.66666666666669" height="76.666666666666671"/>
+                                                                    <rect key="frame" x="120.66666666666667" y="0.0" width="254.33333333333331" height="76.666666666666671"/>
                                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                                     <nil key="textColor"/>
                                                                     <nil key="highlightedColor"/>
@@ -113,7 +113,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="908" y="89.408866995073893"/>
+            <point key="canvasLocation" x="1649" y="813"/>
         </scene>
         <!--Detail View Controller-->
         <scene sceneID="aXw-zk-7fs">
@@ -127,16 +127,17 @@
                                 <rect key="frame" x="0.0" y="54" width="375" height="724"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3kK-B8-aVb">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="267"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="366"/>
                                     </imageView>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="a2I-dD-cJn">
-                                        <rect key="frame" x="0.0" y="275" width="375" height="449"/>
+                                        <rect key="frame" x="0.0" y="374" width="375" height="350"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                     </textView>
                                 </subviews>
+                                <variation key="heightClass=compact" axis="horizontal"/>
                             </stackView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -148,14 +149,16 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="TpN-YW-u61"/>
                     </view>
+                    <navigationItem key="navigationItem" id="CCh-n0-i0m"/>
                     <connections>
                         <outlet property="imageView" destination="3kK-B8-aVb" id="O0v-js-Ihh"/>
+                        <outlet property="stackView" destination="Wyw-tJ-gnR" id="0oK-mc-7nO"/>
                         <outlet property="textView" destination="a2I-dD-cJn" id="Dp1-NR-CyE"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="shY-uk-h4y" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1752.8" y="89.408866995073893"/>
+            <point key="canvasLocation" x="2391" y="813"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="NWo-jJ-6eF">
@@ -173,7 +176,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="eJg-GD-CMV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="136.80000000000001" y="90.404797601199405"/>
+            <point key="canvasLocation" x="801" y="813"/>
         </scene>
     </scenes>
 </document>

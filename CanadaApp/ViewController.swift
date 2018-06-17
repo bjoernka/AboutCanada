@@ -20,10 +20,11 @@ struct rowObject: Decodable {
 }
 
 class ViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
-
+    
     @IBOutlet var collectionView: UICollectionView!
     
     @IBAction func refresh(_ sender: UIBarButtonItem) {
+        getJSONData()
         self.collectionView.reloadData()
     }
     
@@ -35,34 +36,38 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
         collectionView.dataSource = self
         collectionView.delegate = self
         
-        let jsonUrl = "https://dl.dropboxusercontent.com/s/2iodh4vg0eortkl/facts.json"
-        guard let url = URL(string: jsonUrl) else {return}
-        
-        URLSession.shared.dataTask(with: url) { (data, response, err) in
-            // TODO: replace guard with if let
-            guard let data = data else {return}
-            
-            let dataAsIsoLatin = String(data: data, encoding: .isoLatin1)
-            let dataUTF8 = dataAsIsoLatin?.data(using: .utf8)
-            
-            do {
-                let decodedData = try
-                    JSONDecoder().decode(jsonObject.self, from: dataUTF8!)
-                print(decodedData)
-                self.rowObjects = decodedData.rows
-            } catch let jsonErr {
-                print(jsonErr)
-            }
-            
-            DispatchQueue.main.async {
-                self.collectionView.reloadData()
-            }
-            }.resume()
+        getJSONData()
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func getJSONData() {
+        let jsonString = "https://dl.dropboxusercontent.com/s/2iodh4vg0eortkl/facts.json"
+        guard let jsonURL = URL(string: jsonString) else {return}
+        
+        URLSession.shared.dataTask(with: jsonURL) { (data, response, err) in
+            
+            if let data = data {
+                let dataAsIsoLatin = String(data: data, encoding: .isoLatin1)
+                let dataUTF8 = dataAsIsoLatin?.data(using: .utf8)
+                
+                do {
+                    let decodedData = try JSONDecoder().decode(jsonObject.self, from: dataUTF8!)
+                    self.rowObjects = decodedData.rows
+                } catch let jsonErr {
+                    print(jsonErr)
+                }
+                
+                DispatchQueue.main.async {
+                    self.collectionView.reloadData()
+                }
+            } else {
+                return
+            }
+        }.resume()
     }
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -120,7 +125,7 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
         } else {
             detailPage.imageName = "imagehref_is_null"
         }
-
+        
         if let navCon = self.navigationController {
             navCon.pushViewController(detailPage, animated: true)
         } else {
@@ -132,51 +137,13 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        let realScreenHeight = (self.collectionView.bounds.height - (self.navigationController?.navigationBar.bounds.height)! - UIApplication.shared.statusBarFrame.height)
+        //        let realScreenHeight = (self.collectionView.bounds.height - (self.navigationController?.navigationBar.bounds.height)! - UIApplication.shared.statusBarFrame.height)
         return CGSize(width: self.collectionView.frame.width, height: (self.collectionView.frame.height / 5))
     }
     
-}
-
-extension UIImageView {
-    func downloadedFrom(url: URL, contentMode mode: UIViewContentMode = .scaleAspectFit) {
-        contentMode = mode
-        var image = UIImage()
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            if let httpURLResponse = response as? HTTPURLResponse, httpURLResponse.statusCode == 200 {
-                if let mimeType = response?.mimeType, mimeType.hasPrefix("image") {
-                    if let data = data {
-                        image = UIImage(data: data)!
-                    } else {
-                        print("Data Error")
-                    }
-                } else {
-                    print("mineType Error")
-                }
-            } else {
-                print("Data: " + String(describing: data))
-                print("httpURLResponse")
-                image = UIImage(named: "image_not_downloaded")!
-            }
-            
-            DispatchQueue.main.async() {
-                self.image = image
-            }
-            }.resume()
-    }
-    func downloadedFrom(link: String, contentMode mode: UIViewContentMode = .scaleAspectFit) {
-        guard let url = URL(string: link) else { return }
-        downloadedFrom(url: url, contentMode: mode)
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        print("Orientation changed!")
+        collectionView.collectionViewLayout.invalidateLayout()
     }
     
-    func downloadImageLazyFrom(link:String, contentMode: UIViewContentMode) {
-        URLSession.shared.dataTask( with: URL(string:link)!, completionHandler: {
-            (data, response, error) -> Void in
-            DispatchQueue.main.async() {
-                self.contentMode =  contentMode
-                if let data = data { self.image = UIImage(data: data) }
-            }
-        }).resume()
-    }
 }
-
